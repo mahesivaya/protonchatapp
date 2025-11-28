@@ -3,6 +3,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print("User in connect():", self.scope["user"])
+        print("Authenticated:", self.scope["user"].is_authenticated)
         await self.accept()
         print(f'WebSocket connected: {self.channel_name}')
 
@@ -14,7 +16,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json['message']
 
         # Echo message back to client
+        username = self.scope['user'].username
         await self.send(text_data=json.dumps({
-            'message': f'Echo: {message}',
-            'sender': 'system'
+            'message': f"{username}: {message}",
+            'sender': username
         }))
